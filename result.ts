@@ -1,18 +1,22 @@
 /**
  * `Result<T, E>` (sometimes known as `Either<T, E>`) is a generic type that is either something
  * of type `T` in case of success, or of type `E` (usually an `AppError`) in case of failure.
- * Use it for failures which are both expected and recoverable (e.g. IO).
+ *
+ * `Result<T, E>` is generic in both arguments. Thus instead of `AppError`, you can also use a
+ * custom type, in which case you have to use your own `CustomErr` constructor as well.
+ *
+ * Use a Result for failures which are both expected and recoverable (e.g. IO).
  *
  * Usage:
- * ```
+ * ```ts
  * const res = Math.random()
- *   ? Ok('here is our result')
- *   : Err('oh noes')
+ *   ? Ok("here is our result")
+ *   : Err("Oh noes");
  *
  * if (res.ok) {
- *   console.info(res.val)
+ *   console.info(res.val);
  * } else {
- *   console.error(res.error)
+ *   console.error(res.error);
  * }
  * ```
  */
