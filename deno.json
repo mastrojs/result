@@ -1,0 +1,10 @@
+{
+  "name": "@mastrojs/result",
+  "version": "0.1.0",
+  "fmt": {
+    "lineWidth": 100
+  },
+  "exports": {
+    ".": "./result.ts"
+  }
+}
