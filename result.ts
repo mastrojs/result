@@ -1,3 +1,5 @@
+import type { StandardSchemaV1 } from "./standard-schema.ts";
+
 /**
  * `Result<T, E>` (sometimes known as `Either<T, E>`) is a generic type that is either something
  * of type `T` in case of success, or of type `E` (usually an `AppError`) in case of failure.
@@ -34,6 +36,8 @@ export interface AppError<S extends string = string> {
   cause?: Error;
   /** Short English debug string, ideally a string literal */
   error: S;
+  /** List of schema validation issues found, if any */
+  issues?: ReadonlyArray<StandardSchemaV1.Issue>;
   /** Human-readable message, potentially localized */
   message?: string;
   /** just here for TypeScript to distinguish the different `Result<T>` types */
@@ -51,11 +55,18 @@ export const Ok = <T>(val: T): { ok: true; val: T } => ({ ok: true, val });
  * AppError constructor
  */
 export const Err = <S extends string = string>(
+  /** Short English debug string, ideally a string literal */
   error: S,
+  /** HTTP status code, if available */
   statusCode?: number,
+  /** Human-readable message, potentially localized */
   message?: string,
-  cause?: Error,
-): AppError<S> => ({ error, message, ok: undefined, statusCode, cause });
+  /** The Error or schema validation failure that caused this AppError, if any. */
+  cause?: Error | StandardSchemaV1.FailureResult,
+): AppError<S> => {
+  const rest = cause instanceof Error ? { cause } : { issues: cause?.issues };
+  return { error, message, ok: undefined, statusCode, ...rest };
+};
 
 /**
  * Takes a `Promise<T>` that may throw/reject and converts it to a `Result<T>`.
